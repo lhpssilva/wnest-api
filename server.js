@@ -5,7 +5,7 @@ const categoriesRoute = require('./src/routes/categories');
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', devicesRouter);
 app.use('/api', categoriesRoute);
