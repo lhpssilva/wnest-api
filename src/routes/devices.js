@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const Joi = require('joi');
-
-var mockList = [];
+const dbManager = require('../database/db');
 
 // Defines a schema to validate the fields 
 const deviceSchema = Joi.object({
@@ -17,8 +16,19 @@ const deviceSchema = Joi.object({
     .required()
 });
 
-router.get('/devices', (req, res) => {
-  res.status(200).send(JSON.stringify(mockList));
+router.get('/devices', async (req, res) => {
+  try {
+    let [ rows ] = await dbManager.getDevices();
+
+    if (rows && rows.length > 0)
+      res.status(200).send(JSON.stringify(rows));
+    else
+      res.status(204).send();
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Something went wrong');
+  }
 });
 
 router.post('/devices', async (req, res) => {
@@ -35,19 +45,27 @@ router.post('/devices', async (req, res) => {
   }
 
   try {
-    await insertIntoDatabase(value);
-    res.status(200).send(JSON.stringify(value));
+    await dbManager.insertNewDevice(value);
+    res.status(201)
+      .setHeader('location', `/devices`)
+      .send(JSON.stringify(value));
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong');
   }
 });
 
-async function insertIntoDatabase(value) {
-  return new Promise((resolve, reject) => {
-    mockList.push(value);
-    resolve();
-  });
-}
+router.delete('/devices/delete/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+
+  try {
+    await dbManager.deleteDevice(id);
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Something went wrong');
+  }
+});
 
 module.exports = router;
