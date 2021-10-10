@@ -48,3 +48,33 @@ module.exports.deleteDevice = async (id) => {
     throw err;
   }
 }
+
+module.exports.getCategories = async () => {
+  try {
+    const dbConnection = await _connect();
+    const sqlQuery = 'SELECT * FROM `Categories`';
+    return await dbConnection.execute(sqlQuery);
+  } catch (err) {
+    throw err;
+  }
+}
+
+module.exports.insertNewCategory = async (value) => {
+  try {
+    const dbConnection = await _connect();
+    const sqlQuery = 'INSERT INTO `Categories` (name) VALUES (?)';
+    await dbConnection.execute(sqlQuery, [value.name]);
+  } catch (err) {
+    throw err;
+  }
+}
+
+module.exports.deleteCategory = async (id) => {
+  try {
+    const dbConnection = await _connect();
+    const sqlQuery = 'DELETE FROM `Categories` WHERE id=?';
+    await dbConnection.execute(sqlQuery, [id]);
+  } catch (err) {
+    throw err;
+  }
+}
