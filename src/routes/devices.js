@@ -4,7 +4,7 @@ const dbManager = require('../database/db');
 
 // Defines a schema to validate the fields 
 const deviceSchema = Joi.object({
-  category: Joi.number()
+  categoryId: Joi.number()
     .min(1)
     .required(),
   color: Joi.string()
@@ -12,7 +12,7 @@ const deviceSchema = Joi.object({
     .pattern(new RegExp('^[A-Za-z]+$'))
     .required(),
   partNumber: Joi.number()
-    .min(0)
+    .min(1)
     .required()
 });
 
@@ -33,6 +33,7 @@ router.get('/devices', async (req, res) => {
 
 router.post('/devices', async (req, res) => {
   const { error, value } = deviceSchema.validate(req.body);
+  console.log(value)
 
   if (error) {
     res.status(400).send(JSON.stringify({
@@ -47,7 +48,6 @@ router.post('/devices', async (req, res) => {
   try {
     await dbManager.insertNewDevice(value);
     res.status(201)
-      .setHeader('location', `/devices`)
       .send(JSON.stringify(value));
   } catch (err) {
     console.error(err);
@@ -55,13 +55,15 @@ router.post('/devices', async (req, res) => {
   }
 });
 
-router.delete('/devices/delete/:id', async (req, res) => {
-  const { id } = req.params;
-  console.log(id);
+router.delete('/devices', async (req, res) => {
+  const { id } = req.body;
+  console.log(req.body);
 
   try {
     await dbManager.deleteDevice(id);
-    res.status(204).send();
+    res.setHeader('location', `/devices`)
+      .status(204)
+      .send();
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong');

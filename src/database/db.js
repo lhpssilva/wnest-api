@@ -22,7 +22,7 @@ async function _connect () {
 module.exports.getDevices = async () => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'SELECT `Devices`.id, `Devices`.category, `Devices`.color, `Devices`.partNumber, `Categories`.name FROM `Devices`, `Categories` WHERE `Devices`.category = `Categories`.id';
+    const sqlQuery = 'SELECT `devices`.id, `devices`.categoryId, `devices`.color, `devices`.partNumber, `categories`.name FROM `devices`, `categories` WHERE `devices`.categoryId = `categories`.id';
     return await dbConnection.execute(sqlQuery);
   } catch (err) {
     throw err;
@@ -32,8 +32,8 @@ module.exports.getDevices = async () => {
 module.exports.insertNewDevice = async (value) => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'INSERT INTO `Devices` (category, color, partNumber) VALUES (?, ?, ?)';
-    await dbConnection.execute(sqlQuery, [value.category, value.color, value.partNumber]);
+    const sqlQuery = 'INSERT INTO `devices` (categoryId, color, partNumber) VALUES (?, ?, ?)';
+    await dbConnection.execute(sqlQuery, [value.categoryId, value.color, value.partNumber]);
   } catch (err) {
     throw err;
   }
@@ -42,7 +42,7 @@ module.exports.insertNewDevice = async (value) => {
 module.exports.deleteDevice = async (id) => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'DELETE FROM `Devices` WHERE id=?';
+    const sqlQuery = 'DELETE FROM `devices` WHERE id=?';
     await dbConnection.execute(sqlQuery, [id]);
   } catch (err) {
     throw err;
@@ -52,7 +52,7 @@ module.exports.deleteDevice = async (id) => {
 module.exports.getCategories = async () => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'SELECT * FROM `Categories`';
+    const sqlQuery = 'SELECT * FROM `categories`';
     return await dbConnection.execute(sqlQuery);
   } catch (err) {
     throw err;
@@ -62,7 +62,7 @@ module.exports.getCategories = async () => {
 module.exports.insertNewCategory = async (value) => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'INSERT INTO `Categories` (name) VALUES (?)';
+    const sqlQuery = 'INSERT INTO `categories` (name) VALUES (?)';
     await dbConnection.execute(sqlQuery, [value.name]);
   } catch (err) {
     throw err;
@@ -72,7 +72,7 @@ module.exports.insertNewCategory = async (value) => {
 module.exports.deleteCategory = async (id) => {
   try {
     const dbConnection = await _connect();
-    const sqlQuery = 'DELETE FROM `Categories` WHERE id=?';
+    const sqlQuery = 'DELETE FROM `categories` WHERE id=?';
     await dbConnection.execute(sqlQuery, [id]);
   } catch (err) {
     throw err;

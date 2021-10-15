@@ -2,8 +2,6 @@ const router = require('express').Router();
 const Joi = require('joi');
 const dbManager = require('../database/db');
 
-var mockList = [];
-
 // Defines a schema to validate the fields 
 const categorySchema = Joi.object({
   name: Joi.string()
@@ -49,8 +47,8 @@ router.post('/categories', async (req, res) => {
   }
 });
 
-router.delete('/categories/:id', async (req, res) => {
-  const { id } = req.params;
+router.delete('/categories', async (req, res) => {
+  const { id } = req.body;
 
   try {
     await dbManager.deleteCategory(id);
